@@ -10,28 +10,11 @@
 
 This card displays provided Jinja2 template as an HTML content of a card. It uses exactly the same engine as Home Assistant in *Developer tools*.
 
-> **This is a fork** of [PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card](https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card) that fixes a websocket subscription leak. It is a drop-in replacement: same `custom:html-template-card` type, same options, no dashboard changes. Install it **instead of** the original, not alongside it.
-
-## What this fork fixes
-
-The original card (v1.0.2) opens a new `render_template` websocket subscription every time a tracked entity changes and never closes the old ones. On a dashboard that stays open (a wall tablet, a pinned browser tab) the subscriptions pile up until Home Assistant drops the client with:
-
-```
-Client unable to keep up with pending messages. Reached 4096 pending messages.
-```
-
-After a reconnect, the frontend replays every leaked subscription at once, which can leave the dashboard stuck in a disconnect loop until the page is reloaded. See upstream issue [#5](https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card/issues/5).
-
-This fork keeps exactly one subscription per card:
-
-* it subscribes when the card is attached and unsubscribes when it is removed, so cards hidden by a visibility condition hold no subscription;
-* it re-subscribes only when the template text (or the connection) changes;
-* Home Assistant tracks the template's dependencies and pushes new results by itself, so `entities` and `always_update` are no longer needed. Both are still accepted and ignored;
-* template errors are shown in the card instead of leaving it blank.
+Fork of [PiotrMachowski's card](https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card) with the websocket subscription leak fixed ([#5](https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card/issues/5)).
 
 ## Installation
 
-Add `https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card` as a custom repository (type: Dashboard) in HACS / the Home Assistant Marketplace, remove the original card if it is installed, then install this one and reload your dashboards.
+Add `https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card` as a custom repository (type: Dashboard) in HACS / the Home Assistant Marketplace, then install it in place of the original card and reload your dashboards.
 
 
 ## Configuration options
@@ -42,9 +25,9 @@ Add `https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card`
 | `content` | `string` | `true` | - | Content of a card |
 | `ignore_line_breaks` | `boolean` | `false` | `false` | Disables changing line breaks to `</br>` tags |
 | `do_not_parse` | `boolean` | `false` | `false` | Disables template parsing |
-| `always_update` | `boolean` | `false` | `false` | Ignored in this fork (kept for compatibility) |
+| `always_update` | `boolean` | `false` | `false` | Ignored (kept for compatibility) |
 | `picture_elements_mode` | `boolean` | `false` | `false` | Enables picture-elements mode |
-| `entities` | `list` | `false` | `[]` | Ignored in this fork (kept for compatibility) |
+| `entities` | `list` | `false` | `[]` | Ignored (kept for compatibility) |
 
 ### Templates
 

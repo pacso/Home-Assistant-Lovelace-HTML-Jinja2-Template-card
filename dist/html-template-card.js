@@ -1,16 +1,4 @@
-// html-template-card 1.1.0 (pacso fork of
-// PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card v1.0.2).
-//
-// Upstream opens a new render_template subscription on every tracked state
-// change and never unsubscribes, so subscriptions pile up until the websocket
-// queue (4096 pending messages) overflows. This build holds exactly one
-// subscription per card: the server already re-renders and pushes the result
-// whenever anything the template depends on changes.
-//
-//  - subscribes when the card is attached, unsubscribes when it is detached
-//    (so cards hidden by a visibility condition hold no subscription)
-//  - re-subscribes only if the template text or the connection object changes
-//  - `entities` and `always_update` are accepted but no longer needed
+// html-template-card: renders a Jinja2 template as the HTML content of a card.
 (() => {
   const TAG = "html-template-card";
   const VERSION = "1.1.0";
@@ -157,7 +145,7 @@
   }
 
   if (customElements.get(TAG)) {
-    console.warn(`${TAG} ${VERSION}: element already defined - the upstream card is still loaded as a resource`);
+    console.warn(`${TAG} ${VERSION}: element already defined - another copy of this card is loaded as a resource`);
   } else {
     customElements.define(TAG, HtmlTemplateCard);
     console.info(`%c ${TAG} %c ${VERSION} `, "background:#333;color:#fff", "background:#f5b547;color:#000");
