@@ -90,7 +90,7 @@
             if (msg && typeof msg.result !== "undefined") {
               this._lastResult = msg.result;
               this._render(msg.result);
-            } else if (msg && msg.error) {
+            } else if (msg && msg.error && msg.level !== "WARNING") {
               this._renderError(msg.error);
             }
           },
@@ -99,6 +99,8 @@
             template,
             // Same variables the core Markdown card provides.
             variables: { config, user },
+            // Without this the server logs template errors and sends nothing.
+            report_errors: true,
           }
         )
         .then((unsub) => {
