@@ -73,6 +73,7 @@ views:
 * To use mdi icon follow example: `<ha-icon icon="mdi:weather-sunny"></ha-icon>`.
 * If content does not contain any template use flag `do_not_parse: true` to increase performance.
 * To check if your content is correct without changing configuration use *Developer tools*.
+* If a template fails to render, the error is shown in the card.
 * To use this card as an element of picture-elements card use `picture_elements_mode` parameter.
 
 
