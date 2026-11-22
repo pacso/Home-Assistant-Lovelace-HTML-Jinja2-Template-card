@@ -82,11 +82,16 @@
             if (msg && typeof msg.result !== "undefined") {
               this._lastResult = msg.result;
               this._render(msg.result);
-            } else if (msg && msg.error) {
+            } else if (msg && msg.error && msg.level !== "WARNING") {
               this._renderError(msg.error);
             }
           },
-          { type: "render_template", template }
+          {
+            type: "render_template",
+            template,
+            // Without this the server logs template errors and sends nothing.
+            report_errors: true,
+          }
         )
         .then((unsub) => {
           if (sub.cancelled) {
