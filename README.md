@@ -14,8 +14,24 @@ Fork of [PiotrMachowski's card](https://github.com/PiotrMachowski/Home-Assistant
 
 ## Installation
 
-Add `https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card` as a custom repository (type: Dashboard) in HACS / the Home Assistant Marketplace, then install it in place of the original card and reload your dashboards.
+1. In HACS / the Home Assistant Marketplace, open the menu and choose **Custom repositories**.
+2. Add `https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card` with type **Dashboard**.
+3. Install **HTML Jinja2 Template card** and reload your dashboards.
 
+### Migrating from the original card
+
+This is a drop-in replacement: the card type is still `custom:html-template-card` and the options are the same, so your dashboards need no changes.
+
+1. Remove the original card in HACS / the Marketplace. Both define the same element and install to the same folder, so they cannot be installed side by side.
+2. Install this one as described above.
+3. Hard-refresh any open dashboards (and reload wall tablets or the companion app) so the browser drops the old file.
+
+If you installed the original manually, replace the file with [this one](https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card/raw/master/dist/html-template-card.js) and change the resource's `type` to `module` if it is still `js`.
+
+What behaves differently:
+
+* `entities` and `always_update` are accepted but no longer do anything. Home Assistant tracks what each template depends on and the card updates when any of it changes.
+* A template that fails to render shows the error in the card. The original left the card blank or kept its last content.
 
 ## Configuration options
 
