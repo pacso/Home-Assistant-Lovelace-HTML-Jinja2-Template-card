@@ -1,7 +1,7 @@
 // html-template-card: renders a Jinja2 template as the HTML content of a card.
 (() => {
   const TAG = "html-template-card";
-  const VERSION = "1.1.0";
+  const VERSION = "1.2.0";
 
   class HtmlTemplateCard extends HTMLElement {
     static getStubConfig() {
