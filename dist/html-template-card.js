@@ -4,6 +4,13 @@
   const VERSION = "1.1.0";
 
   class HtmlTemplateCard extends HTMLElement {
+    static getStubConfig() {
+      return {
+        ignore_line_breaks: true,
+        content: "The sun is <b>{{ states('sun.sun') }}</b>.",
+      };
+    }
+
     setConfig(config) {
       if (!config || !config.content) {
         throw new Error("You need to define 'content' in your configuration.");
@@ -148,6 +155,14 @@
     console.warn(`${TAG} ${VERSION}: element already defined - another copy of this card is loaded as a resource`);
   } else {
     customElements.define(TAG, HtmlTemplateCard);
+    window.customCards = window.customCards || [];
+    window.customCards.push({
+      type: TAG,
+      name: "HTML Jinja2 Template card",
+      description: "Renders a Jinja2 template as the HTML content of a card",
+      preview: true,
+      documentationURL: "https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card",
+    });
     console.info(`%c ${TAG} %c ${VERSION} `, "background:#333;color:#fff", "background:#f5b547;color:#000");
   }
 })();
