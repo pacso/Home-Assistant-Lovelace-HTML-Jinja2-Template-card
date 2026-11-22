@@ -1,6 +1,6 @@
 # Lovelace HTML Jinja2 Template card
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 [![Community Forum](https://img.shields.io/badge/community-forum-brightgreen.svg?style=popout)](https://community.home-assistant.io/t/html-jinja2-template-card/134550)<!-- piotrmachowski_support_badges_start -->
 [![Ko-Fi][ko_fi_shield]][ko_fi]
 [![buycoffee.to][buycoffee_to_shield]][buycoffee_to]
@@ -10,6 +10,30 @@
 
 This card displays provided Jinja2 template as an HTML content of a card. It uses exactly the same engine as Home Assistant in *Developer tools*.
 
+> **This is a fork** of [PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card](https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card) that fixes a websocket subscription leak. It is a drop-in replacement: same `custom:html-template-card` type, same options, no dashboard changes. Install it **instead of** the original, not alongside it.
+
+## What this fork fixes
+
+The original card (v1.0.2) opens a new `render_template` websocket subscription every time a tracked entity changes and never closes the old ones. On a dashboard that stays open (a wall tablet, a pinned browser tab) the subscriptions pile up until Home Assistant drops the client with:
+
+```
+Client unable to keep up with pending messages. Reached 4096 pending messages.
+```
+
+After a reconnect, the frontend replays every leaked subscription at once, which can leave the dashboard stuck in a disconnect loop until the page is reloaded. See upstream issue [#5](https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card/issues/5).
+
+This fork keeps exactly one subscription per card:
+
+* it subscribes when the card is attached and unsubscribes when it is removed, so cards hidden by a visibility condition hold no subscription;
+* it re-subscribes only when the template text (or the connection) changes;
+* Home Assistant tracks the template's dependencies and pushes new results by itself, so `entities` and `always_update` are no longer needed. Both are still accepted and ignored;
+* template errors are shown in the card instead of leaving it blank.
+
+## Installation
+
+Add `https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card` as a custom repository (type: Dashboard) in HACS / the Home Assistant Marketplace, remove the original card if it is installed, then install this one and reload your dashboards.
+
+
 ## Configuration options
 
 | Key | Type | Required | Default | Description |
@@ -18,9 +42,9 @@ This card displays provided Jinja2 template as an HTML content of a card. It use
 | `content` | `string` | `true` | - | Content of a card |
 | `ignore_line_breaks` | `boolean` | `false` | `false` | Disables changing line breaks to `</br>` tags |
 | `do_not_parse` | `boolean` | `false` | `false` | Disables template parsing |
-| `always_update` | `boolean` | `false` | `false` | Enables refreshing the card with every change of entity |
+| `always_update` | `boolean` | `false` | `false` | Ignored in this fork (kept for compatibility) |
 | `picture_elements_mode` | `boolean` | `false` | `false` | Enables picture-elements mode |
-| `entities` | `list` | `false` | `[]` | List of additional entities whose updates should trigger refresh of the card |
+| `entities` | `list` | `false` | `[]` | Ignored in this fork (kept for compatibility) |
 
 ### Templates
 
@@ -49,33 +73,31 @@ views:
 ```
 
 ## Manual Installation
-1. Download [*html-template-card.js*](https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card/raw/master/dist/html-template-card.js) to `/www/custom_lovelace/html_template_card` directory:
+1. Download [*html-template-card.js*](https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card/raw/master/dist/html-template-card.js) to `/www/custom_lovelace/html_template_card` directory:
     ```bash
     mkdir -p www/custom_lovelace/html_template_card
     cd www/custom_lovelace/html_template_card/
-    wget https://github.com/PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card/raw/master/dist/html-template-card.js
+    wget https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card/raw/master/dist/html-template-card.js
     ```
 2. Add card to resources in `ui-lovelace.yaml` or in raw editor if you are using frontend UI editor:
     ```yaml
     resources:
       - url: /local/custom_lovelace/html_template_card/html-template-card.js
-        type: js
+        type: module
     ```
 
 ## Hints
 * To use mdi icon follow example: `<ha-icon icon="mdi:weather-sunny"></ha-icon>`.
 * If content does not contain any template use flag `do_not_parse: true` to increase performance.
-* If content does not contain entity id (e.g. because of loop) you have to provide it manually in `entities` to enable refresh of the card when it will be updated.
-* If you want to enable refreshing for every change in HA use flag `always_update: true`. **WARNING:** this may cause heavy load of browser/HA. Best to use with flag `do_not_parse: true`.
 * To check if your content is correct without changing configuration use *Developer tools*.
 * To use this card as an element of picture-elements card use `picture_elements_mode` parameter.
 
 
 <!-- piotrmachowski_support_links_start -->
 
-## Support
+## Support the original author
 
-If you want to support my work with a donation you can use one of the following platforms:
+This card was written by Piotr Machowski. If you want to support his work with a donation you can use one of the following platforms:
 
 <table>
   <tr>

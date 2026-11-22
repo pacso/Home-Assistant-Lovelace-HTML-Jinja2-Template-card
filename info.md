@@ -1,5 +1,7 @@
 This card displays provided Jinja2 template as an HTML content of a card. It uses exactly the same engine as Home Assistant in *Developer tools*.
 
+**Fork of PiotrMachowski's card that fixes the websocket subscription leak** ("Client unable to keep up with pending messages"). Drop-in replacement; install it instead of the original.
+
 ## Configuration options
 
 | Key | Type | Required | Default | Description |
@@ -8,9 +10,9 @@ This card displays provided Jinja2 template as an HTML content of a card. It use
 | `content` | `string` | `true` | - | Content of a card |
 | `ignore_line_breaks` | `boolean` | `false` | `false` | Disables changing line breaks to `</br>` tags |
 | `do_not_parse` | `boolean` | `false` | `false` | Disables template parsing |
-| `always_update` | `boolean` | `false` | `false` | Enables refreshing the card with every change of entity |
+| `always_update` | `boolean` | `false` | `false` | Ignored in this fork (kept for compatibility) |
 | `picture_elements_mode` | `boolean` | `false` | `false` | Enables picture-elements mode |
-| `entities` | `list` | `false` | `[]` | List of additional entities whose updates should trigger refresh of the card |
+| `entities` | `list` | `false` | `[]` | Ignored in this fork (kept for compatibility) |
 
 ### Templates
 

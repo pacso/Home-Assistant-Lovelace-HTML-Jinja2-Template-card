@@ -1,4 +1,5 @@
-// html-template-card: displays a Jinja2 template as the HTML content of a card.
+// html-template-card 1.1.0 (pacso fork of
+// PiotrMachowski/Home-Assistant-Lovelace-HTML-Jinja2-Template-card v1.0.2).
 //
 // Upstream opens a new render_template subscription on every tracked state
 // change and never unsubscribes, so subscriptions pile up until the websocket
