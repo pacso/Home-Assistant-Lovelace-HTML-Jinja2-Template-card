@@ -17,7 +17,8 @@ Fork of [PiotrMachowski's card](https://github.com/PiotrMachowski/Home-Assistant
 ### Templates
 
  * Entity state, example: `{{ states('sun.sun') }}`
- * Entity attribute, example: `{{ state_attr('sun.sun', 'elevation') }]`
+ * Entity attribute, example: `{{ state_attr('sun.sun', 'elevation') }}`
+ * Logged-in user's name: `{{ user }}`; the card's own configuration: `{{ config }}`
  * Detailed documentation: [*Templating*](https://www.home-assistant.io/docs/configuration/templating/)
  
 ## Example usage

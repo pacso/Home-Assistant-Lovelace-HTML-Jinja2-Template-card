@@ -68,12 +68,20 @@
 
       const conn = this._hass.connection;
       const template = this._template();
-      if (this._sub && this._sub.conn === conn && this._sub.template === template) {
+      const user = this._hass.user ? this._hass.user.name : undefined;
+      const config = this._config;
+      if (
+        this._sub &&
+        this._sub.conn === conn &&
+        this._sub.template === template &&
+        this._sub.user === user &&
+        this._sub.config === config
+      ) {
         return; // already subscribed to exactly this
       }
       this._unsubscribe();
 
-      const sub = { conn, template, cancelled: false, unsub: null };
+      const sub = { conn, template, user, config, cancelled: false, unsub: null };
       this._sub = sub;
       conn
         .subscribeMessage(
@@ -86,7 +94,12 @@
               this._renderError(msg.error);
             }
           },
-          { type: "render_template", template }
+          {
+            type: "render_template",
+            template,
+            // Same variables the core Markdown card provides.
+            variables: { config, user },
+          }
         )
         .then((unsub) => {
           if (sub.cancelled) {
