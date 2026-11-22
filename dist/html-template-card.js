@@ -1,9 +1,16 @@
 // html-template-card: renders a Jinja2 template as the HTML content of a card.
 (() => {
   const TAG = "html-template-card";
-  const VERSION = "1.1.0";
+  const VERSION = "1.2.0";
 
   class HtmlTemplateCard extends HTMLElement {
+    static getStubConfig() {
+      return {
+        ignore_line_breaks: true,
+        content: "Hello <b>{{ user }}</b>, the sun is {{ states('sun.sun') }}.",
+      };
+    }
+
     setConfig(config) {
       if (!config || !config.content) {
         throw new Error("You need to define 'content' in your configuration.");
@@ -68,12 +75,20 @@
 
       const conn = this._hass.connection;
       const template = this._template();
-      if (this._sub && this._sub.conn === conn && this._sub.template === template) {
+      const user = this._hass.user ? this._hass.user.name : undefined;
+      const config = this._config;
+      if (
+        this._sub &&
+        this._sub.conn === conn &&
+        this._sub.template === template &&
+        this._sub.user === user &&
+        this._sub.config === config
+      ) {
         return; // already subscribed to exactly this
       }
       this._unsubscribe();
 
-      const sub = { conn, template, cancelled: false, unsub: null };
+      const sub = { conn, template, user, config, cancelled: false, unsub: null };
       this._sub = sub;
       conn
         .subscribeMessage(
@@ -82,11 +97,18 @@
             if (msg && typeof msg.result !== "undefined") {
               this._lastResult = msg.result;
               this._render(msg.result);
-            } else if (msg && msg.error) {
+            } else if (msg && msg.error && msg.level !== "WARNING") {
               this._renderError(msg.error);
             }
           },
-          { type: "render_template", template }
+          {
+            type: "render_template",
+            template,
+            // Same variables the core Markdown card provides.
+            variables: { config, user },
+            // Without this the server logs template errors and sends nothing.
+            report_errors: true,
+          }
         )
         .then((unsub) => {
           if (sub.cancelled) {
@@ -148,6 +170,14 @@
     console.warn(`${TAG} ${VERSION}: element already defined - another copy of this card is loaded as a resource`);
   } else {
     customElements.define(TAG, HtmlTemplateCard);
+    window.customCards = window.customCards || [];
+    window.customCards.push({
+      type: TAG,
+      name: "HTML Jinja2 Template card",
+      description: "Renders a Jinja2 template as the HTML content of a card",
+      preview: true,
+      documentationURL: "https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card",
+    });
     console.info(`%c ${TAG} %c ${VERSION} `, "background:#333;color:#fff", "background:#f5b547;color:#000");
   }
 })();

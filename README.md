@@ -32,7 +32,9 @@ Add `https://github.com/pacso/Home-Assistant-Lovelace-HTML-Jinja2-Template-card`
 ### Templates
 
  * Entity state, example: `{{ states('sun.sun') }}`
- * Entity attribute, example: `{{ state_attr('sun.sun', 'elevation') }]`
+ * Entity attribute, example: `{{ state_attr('sun.sun', 'elevation') }}`
+ * Logged-in user's name: `{{ user }}`; the card's own configuration: `{{ config }}`
+ * A template that fails to render shows the error in the card
  * Detailed documentation: [*Templating*](https://www.home-assistant.io/docs/configuration/templating/)
  
 ## Example usage
